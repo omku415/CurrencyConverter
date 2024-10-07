@@ -1,5 +1,5 @@
 BASE_URL =
-  "https://cdn.jsdelivr.net/gh/@fawazahmed0/currency-api@1/latest/currencies";
+  "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
 
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector(" form button");
@@ -36,19 +36,42 @@ const updateFlag = (element) => {
 };
 
 btn.addEventListener("click", async (evt) => {
-  //this is used to prevent the default behavior of form like after form submission it is refreshing the and it get submitted also that's why we are stopping it
+  // Prevent default form submission behavior
   evt.preventDefault();
-  let amount = document.querySelector(".amount input");
-  let amtVal = amount.value;
-  // console.log(amtVal)
-  if (amtVal === "" || amtVal < 1) amtVal = 1;
-  amount.value = "1";
-  // console.log(fromCurr.value,toCurr.value)
 
-  const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}/${toCurr.value.toLowerCase()}.json`;
-  let response = await fetch(URL);
-  let data = await response.json();
-  let rate = data[toCurr.value.toLowerCase()];
-  let finalAmount = amtVal * rate;
-  msg.innerText = `${amtVal}${fromCurr.value}=${finalAmount}${toCurr} `;
+  // Get the amount input
+  let amount = document.querySelector(".amount input");
+  console.log(amount.value);
+
+  // Ensure amount is at least 1
+  if (amount.value === "" || amount.value < 1) {
+    amount.value = "1";
+  }
+
+  // Get the selected currencies
+  const fromCurrency = fromCurr.value.toLowerCase();
+  const toCurrency = toCurr.value.toLowerCase();
+
+  // Build the URL (ensure backticks are properly used)
+  const URL = `${BASE_URL}/${fromCurrency}.json`;
+
+  try {
+    // Fetch exchange rate data
+    let response = await fetch(URL);
+    let data = await response.json();
+
+    // Get the exchange rate
+    let rate = data[fromCurrency][toCurrency];
+
+    // Calculate the final converted amount
+    let finalAmount = amount.value * rate;
+
+    // Display the result
+    msg.innerText = `${amount.value} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
+  } catch (error) {
+    // Handle any errors in the fetch request
+    console.error("Error fetching the exchange rate:", error);
+    msg.innerText = "There was an error fetching the exchange rate.";
+  }
 });
+
