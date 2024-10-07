@@ -10,7 +10,6 @@ body {
     min-height: 100vh;
     background-color: cadetblue;
 }
-
 .container {
     background-color: #fff;
     /* The value 1rem refers to 1 unit of the root element’s font size. In most browsers, 1rem is equal to 16px by default, so 1rem would result in a 16px border radius. */
